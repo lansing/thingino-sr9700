@@ -39,16 +39,23 @@ This repo contains a backported version of the driver that runs on the Thingino 
 
 ---
 
-## Installation Method 1: The Easy Way (Pre-compiled)
+## Installation Method 1: Precompiled (3.10.14 kernel)
 
-If you just want it to work, use the pre-compiled kernel module.
+If you just want it to work, use the pre-compiled kernel module. Note that the module will only load if you have an identical kernel veresion to what it was built with.
+
+In this case, it's:
+
+```
+# uname -a
+Linux wyzecam-v3-3 3.10.14__isvp_swan_1.0__ #1 PREEMPT Thu Dec 11 22:43:20 UTC 2025 mips GNU/Linux
+```
 
 1.  Connect your Thingino camera to Wi-Fi so it has internet access.
 2.  SSH into the camera.
 3.  Run this command:
 
 ```bash
-curl -L https://raw.githubusercontent.com/lansing/thingino-sr9700/main/scripts/install-ko.sh | bash
+curl -L https://raw.githubusercontent.com/lansing/thingino-sr9700/main/scripts/install-ko.sh | sh
 ```
 
 This will download the driver, install it, and set it to load on boot.
@@ -60,7 +67,7 @@ If you are building your own Thingino firmware and want this driver baked into t
 I do all of this inside the docker container supplied in the `thingino-firmware` repo via:
 
 ```
-./docker-build.sh sh
+./docker-build.sh shell
 ```
 
 But you could do it directly in the host machine if you have a known working build setup.
