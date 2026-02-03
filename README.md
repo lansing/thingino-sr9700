@@ -1,17 +1,18 @@
-# The Poorest Man's PoE Adapter (SR9700 Driver for Thingino)
+# The Poorest Man's OTG USB Ethernet with POE
+## (SR9700 Driver for Thingino)
 
 **Disclaimer: This is a terrible idea.** Going through this much trouble to use what is objectively the worst USB ethernet adapter on the market makes no sense. If you are going to build a custom PoE adapter for Thingino, you *should* use a supported adapter like the Amazon Basics USB 2.0 (ASIX/Realtek based), which costs $5 and works natively.
 
-But if you are stubborn, cheap, or just enjoy pain... let's get into it.
-
 ## My Story
 
-I wanted to build a PoE solution for a stack of refurbished Wyze Cam V3s I got for ~$17/each. Factory PoE adapters (which provide a USB OTG ethernet adapter and PoE power to both the ethernet adapter and the host camera) are easily available. But, they cost more than I paid for the cameras, so clearly I'm not going to use them.
+I wanted to build a PoE solution for a stack of refurbished Wyze Cam V3s I got for ~$17/each. Factory PoE adapters (which provide a USB OTG ethernet adapter and PoE power to both the ethernet adapter and the host camera) are easily available. But, they cost more than I paid for the cameras, so they're out of the question.
+
+Let's build one from the cheapest components I can find or forage.
 
 **My Bill of Materials:**
 * **Ethernet Adapter:** The cheapest USB ethernet adapter I could find on AliExpress ($1.12 per item), which turned out to be an SR9700-based adapter. (Net Cost: $0.00 after refund because they lied about USB 2.0 support, it's actually a USB 1.1 device).
-* **PoE Splitter:** Waterproof generic 12V output module ($1.71).
-* **Buck Converter:** Mini DC-DC step down, 12V->5V ($0.46).
+* **PoE Splitter:** Waterproof generic 12V output module ($1.71, AliExpress).
+* **Buck Converter:** Mini DC-DC step down, 12V->5V ($0.46, AliExpress).
 * **Junk:** Scrap wires, silicon tape, heat shrink, project boxes (free).
 * **Total cost per unit:**  $2.17 plus a lot of my time.
 
@@ -41,14 +42,16 @@ This repo contains a backported version of the driver that runs on the Thingino 
 
 ## Installation Method 1: Precompiled (3.10.14 kernel)
 
-If you just want it to work, use the pre-compiled kernel module. Note that the module will only load if you have an identical kernel veresion to what it was built with.
+If you just want it to work, use the pre-compiled kernel module. Note that the module will only load if your kernel version is identical to what it was built with.
 
 In this case, it's:
 
 ```
 # uname -a
-Linux wyzecam-v3-3 3.10.14__isvp_swan_1.0__ #1 PREEMPT Thu Dec 11 22:43:20 UTC 2025 mips GNU/Linux
+Linux $HOSTNAME 3.10.14__isvp_swan_1.0__ #1 PREEMPT Thu Dec 11 22:43:20 UTC 2025 mips GNU/Linux
 ```
+
+If you see something different (ignore $HOSTNAME) then you will need to move on to method 2 below.
 
 1.  Connect your Thingino camera to Wi-Fi so it has internet access.
 2.  SSH into the camera.
