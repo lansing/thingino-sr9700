@@ -12,16 +12,18 @@ I wanted to build a PoE solution for a stack of refurbished Wyze Cam V3s I got f
 * **Ethernet Adapter:** The cheapest USB ethernet adapter I could find on AliExpress ($1.12 per item), which turned out to be an SR9700-based adapter. (Net Cost: $0.00 after refund because they lied about USB 2.0 support, it's actually a USB 1.1 device).
 * **PoE Splitter:** Waterproof generic 12V output module ($1.71).
 * **Buck Converter:** Mini DC-DC step down, 12V->5V ($0.46).
-* **Junk:** Scrap twisted pair wires, silicon tape, heat shrink, project boxes.
+* **Junk:** Scrap wires, silicon tape, heat shrink, project boxes (free).
 * **Total cost per unit:**  $2.17 plus a lot of my time.
 
-**The Hardware Hack:**
-1.  **Set Voltage:** Ensure your buck converter is outputting exactly 5V. Solder jumper pads if necessary (this step will be module specific).
-2.  **Split Power:** Take the 12V output from the PoE splitter and solder it to the **Input** of the buck converter.
-3.  **Injector Surgery:** Crack open the cheap USB Ethernet adapter (usually held together with a sticker). Solder the **5V Output** from the buck converter to the VCC/GND pads on the adapter (red/black generally), which will be shared with the host device.
+**The Hardware Build:**
+1.  **Set Voltage:** Ensure your buck converter is outputting exactly 5V. Solder jumper pads or make other adjustment as required (this step will be module specific).
+2.  **Add Power:** Strip the 12V output from the PoE splitter and solder it to the input of the buck converter.
+3.  **Injector Surgery:** Crack open the USB Ethernet adapter (usually held together with a sticker). Solder the 5V output from the buck converter to the VCC/GND pads on the adapter (red/black generally), which will be shared with the host device.
 4.  **Assembly:** Wrap it all in heat shrink/tape/project box. Plug the Ethernet side into a PoE switch and confirm the link is active. Then you can plug the USB side into the camera.
 
 ## The Software Nightmare
+
+After spending a pleasant weekend afternoon assembling the adapters, I got to begin a new stage of this journey.
 
 If you plug this into a modern Linux machine, it might work. If you plug it into Thingino (Linux 3.10), it fails.
 
@@ -104,4 +106,30 @@ But you could do it directly in the host machine if you have a known working bui
 7.  **Flash and Enjoy:**
     Flash the new firmware image to your camera using your preferred method. The `sr9700` driver will now initialize automatically on boot, detect your composite device, and negotiate the link correctly.
 
+## Measuring Performance
+
+After all that, is this device actually usable? After all, it's a USB 1.1 ethernet adapter...
+
+To test the raw throughput available, let's just pipe some dummy data. I have the camera connected to a Mac laptop, on which I run:
+
+```
+nc -l 5001 > /dev/null
+```
+
+And on the camera I run:
+
+```
+time dd if=/dev/zero bs=1M count=10 | nc 192.168.2.1 5001
+```
+
+After a long wait, this prints out:
+```
+10+0 records in
+10+0 records out
+real	0m 20.22s
+user	0m 0.00s
+sys	0m 0.06s
+```
+
+According to my sloppy math, this is about 4000 kbit per second. I generally have these cameras configured to stream H265 at 3000 kbit/second. So it seems that we are in business, but just barely!
 
